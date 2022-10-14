@@ -7,6 +7,7 @@ namespace comfoair {
       Serial.println();
       Serial.print("Connecting to ");
       Serial.println(WIFI_SSID);
+      ::WiFi.hostname(HOSTNAME);
       ::WiFi.begin(WIFI_SSID, WIFI_PASS);
       ::WiFi.setAutoReconnect(true);
       while (::WiFi.status() != WL_CONNECTED) {
