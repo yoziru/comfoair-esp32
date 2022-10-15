@@ -44,6 +44,8 @@ WiFiClient wifiClient;
 // PRIVATE STUFF
 
   void MQTT::ensureConnected() {
+    char statusTopic[] = MQTT_PREFIX "/status";
+
     // Loop until we're reconnected
     while (!this->client.connected()) {
         Serial.print("Attempting MQTT connection...");
@@ -51,15 +53,20 @@ WiFiClient wifiClient;
         // Attempt to connect
         String clientId = "ESP32Client-";
         clientId += String(random(0xffff), HEX);
-        if (client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS)) {
+        // Last will message -> notify HA that device is offline
+        if (client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS, statusTopic, 0, true, "off")) {
             Serial.println("connected");
             subscribeToTopics();
-        } else {
-            Serial.print("failed, rc=");
-            Serial.print(client.state());
-            Serial.println(" try again in 5 seconds");
-            // Wait 5 seconds before retrying
-            delay(5000);
+
+            client.publish(statusTopic, "on");
+        }
+        else
+        {
+          Serial.print("failed, rc=");
+          Serial.print(client.state());
+          Serial.println(" try again in 5 seconds");
+          // Wait 5 seconds before retrying
+          delay(5000);
         }
     }
   }
