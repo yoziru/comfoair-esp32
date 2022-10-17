@@ -6,7 +6,7 @@
 
 namespace comfoair {
 
-  WiFiClient wifiClient;
+WiFiClient wifiClient;
   MQTT::MQTT() {
     this->client = PubSubClient(wifiClient);
   }
@@ -20,7 +20,7 @@ namespace comfoair {
 
   void MQTT::setup() {
     this->client.setServer(MQTT_HOST, MQTT_PORT);
-    this->client.setCallback([this](char* topic, unsigned char* payload, unsigned int length) {
+    this->client.setCallback([this](char * topic, unsigned char* payload, unsigned int length){
       Serial.println("-------new message from broker-----");
       Serial.print("channel:");
       Serial.println(topic);
@@ -28,7 +28,7 @@ namespace comfoair {
       Serial.write(payload, length);
       Serial.println();
       callbackMap[topic](topic, payload, length);
-      });
+    });
   }
 
   void MQTT::loop() {
@@ -41,36 +41,36 @@ namespace comfoair {
     this->client.publish(topic, payload, true);
   }
 
-  // PRIVATE STUFF
+// PRIVATE STUFF
 
   void MQTT::ensureConnected() {
     // Loop until we're reconnected
     while (!this->client.connected()) {
-      Serial.print("Attempting MQTT connection...");
-      // Create a random client ID
-      // Attempt to connect
-      String clientId = "ESP32Client-";
-      clientId += String(random(0xffff), HEX);
-      // Last will message -> notify HA that device is offline
-      if (client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS, MQTT_PREFIX "/status", 0, true, "offline")) {
-        Serial.println("connected");
-        subscribeToTopics();
+        Serial.print("Attempting MQTT connection...");
+        // Create a random client ID
+        // Attempt to connect
+        String clientId = "ESP32Client-";
+        clientId += String(random(0xffff), HEX);
+        // Last will message -> notify HA that device is offline
+        if (client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS, MQTT_PREFIX "/status", 0, true, "offline")) {
+            Serial.println("connected");
+            subscribeToTopics();
 
-        // Device is on!
-        client.publish(MQTT_PREFIX "/status", "online", true);
-      } else {
-        Serial.print("failed, rc=");
-        Serial.print(client.state());
-        Serial.println(" try again in 5 seconds");
-        // Wait 5 seconds before retrying
-        delay(5000);
+            // Device is on!
+            client.publish(MQTT_PREFIX "/status", "online", true);
+        } else {
+            Serial.print("failed, rc=");
+            Serial.print(client.state());
+            Serial.println(" try again in 5 seconds");
+            // Wait 5 seconds before retrying
+            delay(5000);
+        }
       }
-    }
   }
 
   void MQTT::subscribeToTopics() {
     std::map<std::string, std::function<void(char*, uint8_t*, unsigned int)>>::iterator it;
-    for (it = callbackMap.begin(); it != callbackMap.end(); ++it) {
+    for (it=callbackMap.begin(); it!=callbackMap.end(); ++it) {
       std::string s = it->first;
       Serial.print("Subscribing to: ");
       Serial.println(s.c_str());

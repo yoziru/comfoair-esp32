@@ -3,39 +3,32 @@
 #include "CanAddress.h"
 #include "commands.h"
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
+#define min(a,b) ((a) < (b) ? (a): (b))
 #define DEBUG true
-void printFrame(CAN_FRAME* message)
+void printFrame(CAN_FRAME *message)
 {
-  Serial.print(message->id, HEX);
-  Serial.print(" ");
-  for (byte i = 0; i < message->length; i++)
-  {
-    if (message->data.byte[i] < 16)
-      Serial.print("0");
-    Serial.print(message->data.byte[i], HEX);
+    Serial.print(message->id, HEX);
     Serial.print(" ");
-  }
-  Serial.println();
+    for (byte i = 0; i < message->length; i++) {
+        if(message->data.byte[i] < 16) Serial.print("0");
+        Serial.print(message->data.byte[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
 }
 CAN_FRAME message;
 #ifdef DEBUG
 uint8_t hextob(char ch)
 {
-  if (ch >= '0' && ch <= '9')
-    return ch - '0';
-  if (ch >= 'A' && ch <= 'F')
-    return ch - 'A' + 10;
-  if (ch >= 'a' && ch <= 'f')
-    return ch - 'a' + 10;
-  return 0;
+    if (ch >= '0' && ch <= '9') return ch - '0';
+    if (ch >= 'A' && ch <= 'F') return ch - 'A' + 10;
+    if (ch >= 'a' && ch <= 'f') return ch - 'a' + 10;
+    return 0;
 }
 #endif
-namespace comfoair
-{
-  void ComfoMessage::test(const char* test, const char* name, const char* expectedValue)
-  {
-#ifdef DEBUG
+namespace comfoair {
+  void ComfoMessage::test(const char * test, const char * name, const char * expectedValue) {
+    #ifdef DEBUG
     Serial.print("Testing: ");
     Serial.print(test);
     Serial.print(" - ");
@@ -43,17 +36,17 @@ namespace comfoair
     Serial.print(" - ");
     Serial.println(expectedValue);
 
-    message.id = 0;
-    for (uint8_t i = 0; i < 8; i++) {
-      message.id <<= 4;
-      message.id += hextob(test[i]);
-    }
-    message.length = hextob(test[8]);
-    for (uint8_t i = 0; i < message.length; i++) {
-      message.data.uint8[i] = (hextob(test[i * 2 + 9]) << 4) + hextob(test[i * 2 + 10]);
-    }
-    DecodedMessage decodeddd;
-    this->decode(&message, &decodeddd);
+    message.id = 0;    
+    for (uint8_t i=0; i< 8; i++) { 
+      message.id <<=4; 
+      message.id += hextob(test[i]); 
+    } 
+    message.length = hextob(test[8]); 
+    for (uint8_t i=0; i<message.length; i++) { 
+      message.data.uint8[i] = (hextob(test[i*2+9]) << 4) + hextob(test[i*2+10]); 
+    } 
+    DecodedMessage decodeddd;  
+    this->decode(&message, &decodeddd); 
     if (strcmp(decodeddd.name, name) != 0) {
       Serial.print("[ERR] Received Name: ");
       Serial.println(decodeddd.name);
@@ -62,14 +55,13 @@ namespace comfoair
       Serial.print("[ERR] Received Value: ");
       Serial.println(decodeddd.val);
     }
-#endif
+    #endif
   }
-  ComfoMessage::ComfoMessage()
-  {
+  ComfoMessage::ComfoMessage() {
     this->sequence = 0;
     message.extended = true;
     message.rtr = 0;
-#ifdef DEBUG
+    #ifdef DEBUG 
     this->test("00040041107", "away_indicator", "true");
     this->test("00040041101", "away_indicator", "false");
     this->test("00104041102", "fan_speed", "2");
@@ -107,158 +99,149 @@ namespace comfoair
     this->test("00490041145", "outdoor_air_humidity", "69");
     this->test("0049804111B", "supply_air_humidity", "27");
     this->test("003740412C700", "post_heater_temp_after", "19.9");
-#endif
+    #endif
   }
 
-  bool ComfoMessage::sendCommand(char const* command)
-  {
-#define CMDIF(name)                                          \
-  if (strcmp(command, #name) == 0)                           \
-  {                                                          \
-    this->send(new std::vector<uint8_t>(CMD_##name));        \
-    delay(1000);                                             \
-    return this->send(new std::vector<uint8_t>(CMD_##name)); \
-  }                                                          \
-  else
+  bool ComfoMessage::sendCommand(char const * command) {
+    #define CMDIF(name) if (strcmp(command, #name) == 0) { \
+                          this->send(new std::vector<uint8_t>( CMD_ ## name )); \
+                          delay(1000); \
+                          return this->send(new std::vector<uint8_t>( CMD_ ## name )); \
+                        } else 
     CMDIF(ventilation_level_0)
-      CMDIF(ventilation_level_1)
-      CMDIF(ventilation_level_2)
-      CMDIF(ventilation_level_3)
-      CMDIF(boost_10_min)
-      CMDIF(boost_20_min)
-      CMDIF(boost_30_min)
-      CMDIF(boost_60_min)
-      CMDIF(boost_end)
-      CMDIF(auto)
-      CMDIF(manual)
-      CMDIF(bypass_activate_1h)
-      CMDIF(bypass_deactivate_1h)
-      CMDIF(bypass_auto)
-      CMDIF(ventilation_supply_only)
-      CMDIF(ventilation_supply_only_reset)
-      CMDIF(ventilation_extract_only)
-      CMDIF(ventilation_extract_only_reset)
-      CMDIF(temp_profile_normal)
-      CMDIF(temp_profile_cool)
-      CMDIF(temp_profile_warm)
-      return false;
+    CMDIF(ventilation_level_1)
+    CMDIF(ventilation_level_2)
+    CMDIF(ventilation_level_3)
+    CMDIF(boost_10_min)
+    CMDIF(boost_20_min)
+    CMDIF(boost_30_min)
+    CMDIF(boost_60_min)
+    CMDIF(boost_end)
+    CMDIF(auto)
+    CMDIF(manual)
+    CMDIF(bypass_activate_1h)
+    CMDIF(bypass_deactivate_1h)
+    CMDIF(bypass_auto)
+    CMDIF(ventilation_supply_only)
+    CMDIF(ventilation_supply_only_reset)
+    CMDIF(ventilation_extract_only)
+    CMDIF(ventilation_extract_only_reset)
+    CMDIF(temp_profile_normal)
+    CMDIF(temp_profile_cool)
+    CMDIF(temp_profile_warm)
+    return false;
   }
 
-  bool ComfoMessage::decode(CAN_FRAME* frame, DecodedMessage* message) {
+  bool ComfoMessage::decode(CAN_FRAME *frame, DecodedMessage *message) {
     uint16_t PDOID = (frame->id & 0x01fff000) >> 14;
-    uint8_t* vals = &frame->data.uint8[0];
-#define uint16 (vals[0] + (vals[1] << 8))
-#define int16 (vals[1] < 0x80 ? (vals[0] + (vals[1] << 8)) : -((vals[0] ^ 0xFF) + ((vals[1] ^ 0xFF) << 8) + 1))
-#define uint32 (uint16 + ((vals[2] + (vals[3] << 8)) << 16))
-#define LAZYSWITCH(id, key, format, transformation) \
-  case id:                                          \
-    strcpy(message->name, key);                     \
-    sprintf(message->val, format, transformation);  \
-    return true;
+    uint8_t *vals = &frame->data.uint8[0];
+    #define uint16 (vals[0] + (vals[1]<<8))
+    #define int16 (vals[1] < 0x80 ? (vals[0] + (vals[1] << 8)) : - ((vals[0] ^ 0xFF) + ((vals[1] ^ 0xFF) << 8) + 1))
+    #define uint32 (uint16 + ((vals[2] + (vals[3]<<8))<<16))
+    #define LAZYSWITCH(id, key, format, transformation) case id: \
+                                                  strcpy(message->name, key); \
+                                                  sprintf(message->val, format, transformation); \
+                                                  return true;
 
-    // For documentation on PDOID's see: https://github.com/michaelarnauts/comfoconnect/blob/master/PROTOCOL-PDO.md
-    switch (PDOID)
-    {
+// For documentation on PDOID's see: https://github.com/michaelarnauts/comfoconnect/blob/master/PROTOCOL-PDO.md
+    switch (PDOID) {
       LAZYSWITCH(16, "away_indicator", "%s", vals[0] == 0x07 ? "true" : "false")
-        LAZYSWITCH(49, "climate/mode", "%s", vals[0] == 1 ? "limited_manual" : (vals[0] == 0xff ? "auto" : "manual")) // 01 = limited_manual, FF = auto, 05 = unlimited_manual
-        LAZYSWITCH(65, "climate/fan", "%s", vals[0] == 0 ? "off" : (vals[0] == 1 ? "low" : (vals[0] == 2 ? "medium" : "high")))
-        LAZYSWITCH(66, "bypass_activation_mode", "%s", vals[0] == 0 ? "auto" : (vals[0] == 1 ? "activated" : "deactivated")) // 0 auto, 1 activated, 2 deactivated
-        LAZYSWITCH(67, "climate/preset", "%s", vals[0] == 0 ? "auto" : (vals[0] == 1 ? "cool" : "warm"))                     // 0 auto, 1 cold, 2 warm
-        LAZYSWITCH(81, "next_fan_change", "%d", uint32)
-        LAZYSWITCH(82, "next_bypass_change", "%d", uint32)
+      LAZYSWITCH(49, "climate/mode", "%s", vals[0] == 1 ? "limited_manual" : (vals[0] == 0xff ? "auto" : "manual")) // 01 = limited_manual, FF = auto, 05 = unlimited_manual
+      LAZYSWITCH(65, "climate/fan", "%s", vals[0] == 0 ? "off" : (vals[0] == 1 ? "low" : (vals[0] == 2 ? "medium" : "high")))
+      LAZYSWITCH(66, "bypass_activation_mode", "%s", vals[0] == 0 ? "auto" : (vals[0] == 1 ? "activated" : "deactivated")) // 0 auto, 1 activated, 2 deactivated
+      LAZYSWITCH(67, "climate/preset", "%s", vals[0] == 0 ? "auto" : (vals[0] == 1 ? "cool" : "warm"))                     // 0 auto, 1 cold, 2 warm
+      LAZYSWITCH(81, "next_fan_change", "%d", uint32)
+      LAZYSWITCH(82, "next_bypass_change", "%d", uint32)
 
-        // Fans
-        LAZYSWITCH(117, "exhaust_fan_duty", "%d", vals[0]) // %
-        LAZYSWITCH(118, "supply_fan_duty", "%d", vals[0])  // %
-        LAZYSWITCH(119, "exhaust_fan_flow", "%d", uint16)  // m3/h
-        LAZYSWITCH(120, "supply_fan_flow", "%d", uint16)   // m3/h
-        LAZYSWITCH(121, "exhaust_fan_speed", "%d", uint16) // rpm
-        LAZYSWITCH(122, "supply_fan_speed", "%d", uint16)  // rpm
+      // Fans
+      LAZYSWITCH(117, "exhaust_fan_duty", "%d", vals[0]) // %
+      LAZYSWITCH(118, "supply_fan_duty", "%d", vals[0])  // %
+      LAZYSWITCH(119, "exhaust_fan_flow", "%d", uint16)  // m3/h
+      LAZYSWITCH(120, "supply_fan_flow", "%d", uint16)   // m3/h
+      LAZYSWITCH(121, "exhaust_fan_speed", "%d", uint16) // rpm
+      LAZYSWITCH(122, "supply_fan_speed", "%d", uint16)  // rpm
 
-        // Power
-        LAZYSWITCH(128, "power_consumption_current", "%d", uint16)
-        LAZYSWITCH(129, "power_consumption_ytd", "%d", uint16)         // kWh
-        LAZYSWITCH(130, "power_consumption_since_start", "%d", uint16) // kWh
+      // Power
+      LAZYSWITCH(128, "power_consumption_current", "%d", uint16)
+      LAZYSWITCH(129, "power_consumption_ytd", "%d", uint16)         // kWh
+      LAZYSWITCH(130, "power_consumption_since_start", "%d", uint16) // kWh
 
-        LAZYSWITCH(192, "remaining_days_filter_replacement", "%d", uint16) // days
+      LAZYSWITCH(192, "remaining_days_filter_replacement", "%d", uint16) // days
 
-        // Avoided heating section
-        LAZYSWITCH(213, "ah_actual", "%.2f", uint16 / 100.0) // watts
-        LAZYSWITCH(214, "ah_ytd", "%d", uint16)              // wh
-        LAZYSWITCH(215, "ah_total", "%d", uint16)            // wh
-        // Avoided cooling section
-        LAZYSWITCH(216, "ac_actual", "%.2f", uint16 / 100.0) // watts
-        LAZYSWITCH(217, "ac_ytd", "%d", uint16)              // wh
-        LAZYSWITCH(218, "ac_total", "%d", uint16)            // wh
+      // Avoided heating section
+      LAZYSWITCH(213, "ah_actual", "%.2f", uint16 / 100.0) // watts
+      LAZYSWITCH(214, "ah_ytd", "%d", uint16)              // wh
+      LAZYSWITCH(215, "ah_total", "%d", uint16)            // wh
+      // Avoided cooling section
+      LAZYSWITCH(216, "ac_actual", "%.2f", uint16 / 100.0) // watts
+      LAZYSWITCH(217, "ac_ytd", "%d", uint16)              // wh
+      LAZYSWITCH(218, "ac_total", "%d", uint16)            // wh
 
-        LAZYSWITCH(227, "bypass_state", "%d", vals[0]) // %
+      LAZYSWITCH(227, "bypass_state", "%d", vals[0]) // %
 
-        // temps
-        LAZYSWITCH(209, "rmot", "%.1f", uint16 / 10.0)        // C°
-        LAZYSWITCH(212, "target_temp", "%.1f", uint16 / 10.0) // C°
-        LAZYSWITCH(220, "pre_heater_temp_before", "%.1f", uint16 / 10.0) // C°
-        LAZYSWITCH(221, "post_heater_temp_after", "%.1f", uint16 / 10.0) // C°
-        LAZYSWITCH(274, "extract_air_temp", "%.1f", int16 / 10.0) // C°
-        LAZYSWITCH(275, "exhaust_air_temp", "%.1f", int16 / 10.0) // C°
-        LAZYSWITCH(276, "outdoor_air_temp", "%.1f", int16 / 10.0) // C°
-        LAZYSWITCH(277, "pre_heater_temp_after", "%.1f", int16 / 10.0)   // C°
-        LAZYSWITCH(278, "post_heater_temp_before", "%.1f", int16 / 10.0) // C°
-        // Humidity
-        LAZYSWITCH(290, "extract_air_humidity", "%d", vals[0])      // %
-        LAZYSWITCH(291, "exhaust_air_humidity", "%d", vals[0])      // %
-        LAZYSWITCH(292, "outdoor_air_humidity", "%d", vals[0])      // %
-        LAZYSWITCH(293, "pre_heater_humidity_after", "%d", vals[0]) // %
-        LAZYSWITCH(294, "supply_air_humidity", "%d", vals[0])       // %
-    default:
-      return false;
+      // temps
+      LAZYSWITCH(209, "rmot", "%.1f", uint16 / 10.0)        // C°
+      LAZYSWITCH(212, "target_temp", "%.1f", uint16 / 10.0) // C°
+      LAZYSWITCH(220, "pre_heater_temp_before", "%.1f", uint16 / 10.0) // C°
+      LAZYSWITCH(221, "post_heater_temp_after", "%.1f", uint16 / 10.0) // C°
+      LAZYSWITCH(274, "extract_air_temp", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(275, "exhaust_air_temp", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(276, "outdoor_air_temp", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(277, "pre_heater_temp_after", "%.1f", int16 / 10.0)   // C°
+      LAZYSWITCH(278, "post_heater_temp_before", "%.1f", int16 / 10.0) // C°
+      // Humidity
+      LAZYSWITCH(290, "extract_air_humidity", "%d", vals[0])      // %
+      LAZYSWITCH(291, "exhaust_air_humidity", "%d", vals[0])      // %
+      LAZYSWITCH(292, "outdoor_air_humidity", "%d", vals[0])      // %
+      LAZYSWITCH(293, "pre_heater_humidity_after", "%d", vals[0]) // %
+      LAZYSWITCH(294, "supply_air_humidity", "%d", vals[0])       // %
+      default:
+        return false;
     }
   }
-
-  bool ComfoMessage::send(std::vector<uint8_t>* buf)
-  {
+  
+  bool ComfoMessage::send(std::vector<uint8_t> *buf) {
     return this->send(buf->size(), buf->data());
   }
 
-  bool ComfoMessage::send(uint8_t length, uint8_t* buf)
-  {
+  bool ComfoMessage::send(uint8_t length, uint8_t *buf) {
     this->sequence++;
     this->sequence = this->sequence & 0x3;
     message.extended = true;
-    if (length > 8)
-    {
+    if (length > 8) {
       CanAddress addr = CanAddress(0x11, 0x1, 0, 1, 0, 1, this->sequence);
       uint8_t dataGrams = length / 7;
-      if (dataGrams * 7 == length)
-      {
+      if (dataGrams * 7 == length)  {
         dataGrams--;
       }
 
-      for (uint8_t i = 0; i < dataGrams; i++)
-      {
+      for (uint8_t i = 0; i < dataGrams; i++) {
         memset(message.data.byte, 0, 8);
         message.data.uint8[0] = i;
-        message.length = min((i * 7) + 7, length) - i * 7 + 1;
+        message.length = min((i*7)+7, length) - i*7 + 1;
         message.id = addr.canID();
-        memcpy(&message.data.uint8[1], &buf[i * 7], message.length - 1);
+        memcpy(& message.data.uint8[1], &buf[i * 7], message.length - 1);
         CAN0.sendFrame(message);
         printFrame(&message);
       }
+
 
       // Send last packet
       memset(message.data.uint8, 0, 8);
       message.data.uint8[0] = dataGrams | 0x80;
       message.length = length - dataGrams * 7 + 1;
-      memcpy(&message.data.uint8[1], &buf[dataGrams * 7], length - dataGrams * 7);
+      memcpy(& message.data.uint8[1], &buf[dataGrams * 7], length - dataGrams * 7);
       CAN0.sendFrame(message);
       printFrame(&message);
-    } else
-    {
+
+    } else {
       CanAddress addr = CanAddress(0x11, 0x1, 0, 0, 0, 1, this->sequence);
       message.id = addr.canID();
       message.length = length;
       memcpy(message.data.uint8, buf, length);
       CAN0.sendFrame(message);
       printFrame(&message);
+
     }
     return true;
   }
