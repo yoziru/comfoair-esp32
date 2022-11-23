@@ -52,12 +52,12 @@ WiFiClient wifiClient;
         String clientId = "ESP32Client-";
         clientId += String(random(0xffff), HEX);
         // Last will message -> notify HA that device is offline
-        if (client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS, MQTT_PREFIX "/status", 0, true, "offline")) {
+        if (this->client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS, MQTT_PREFIX "/status", 0, true, "offline")) {
             Serial.println("connected");
             subscribeToTopics();
 
             // Device is on!
-            client.publish(MQTT_PREFIX "/status", "online", true);
+            this->client.publish(MQTT_PREFIX "/status", "online", true);
         } else {
             Serial.print("failed, rc=");
             Serial.print(client.state());
