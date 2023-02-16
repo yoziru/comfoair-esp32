@@ -33,8 +33,9 @@ namespace comfoair {
 
   void ComfoAir::setup() {
     Serial.println("ESP_SMT init");
-    CAN0.setCANPins(GPIO_NUM_5, GPIO_NUM_4);
-    // CAN0.setDebuggingMode(true);
+    //CAN0.setCANPins(GPIO_NUM_5, GPIO_NUM_4);
+    CAN0.setCANPins(GPIO_NUM_35, GPIO_NUM_5);
+    //CAN0.setDebuggingMode(true);
     CAN0.begin(50000);
     CAN0.watchFor();
     
