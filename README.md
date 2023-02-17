@@ -8,10 +8,13 @@ https://www.olimex.com/Products/IoT/ESP32/BOX-ESP32-EVB-EA/
 
 So you don't need to do soldery or 3D box,... the only things needed are the board and the case.
 
+For the cable, use a standard network cable and connect orange, white-orange, white-green on the olimex (see picture)
+
 Here is a picture of the board in the case connected to my Zehnder Comfoair q450.
 
 ![](./docs/olimex1.jpeg)
 ![](./docs/olimex2.jpeg)
+![](./docs/ha_screen.png)
 
 
 ************************************
