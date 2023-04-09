@@ -59,8 +59,6 @@ Diagram below shows my version of connections.
   icon: mdi:fan
   availability: 
     topic: "comfoair/status"
-    payload_available: "online"
-    payload_not_available: "offline"
   current_temperature_topic: "comfoair/post_heater_temp_after"
   temperature_state_topic: "comfoair/target_temp"
   fan_mode_command_topic: "comfoair/climate/fan/set"
