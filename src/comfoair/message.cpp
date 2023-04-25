@@ -146,57 +146,56 @@ namespace comfoair {
 // For documentation on PDOID's see: https://github.com/michaelarnauts/comfoconnect/blob/master/PROTOCOL-PDO.md
     switch (PDOID) {
       LAZYSWITCH(16, "away_indicator", "%s", vals[0] == 0x07 ? "true" : "false")
-      LAZYSWITCH(49, "operating_mode", "%s", vals[0] == 1 ? "limited_manual": (vals[0] == 0xff ? "auto": "unlimited_manual"))  // 01 = limited_manual, FF = auto, 05 = unlimited_manual
-      LAZYSWITCH(65, "fan_speed", "%d", vals[0])
-      LAZYSWITCH(66, "bypass_activation_mode", "%s", vals[0] == 0 ? "auto": (vals[0] == 1 ? "activated": "deactivated")) // 0 auto, 1 activated, 2 deactivated
-      LAZYSWITCH(67, "temp_profile", "%s", vals[0] == 0 ? "auto": (vals[0] == 1 ? "cold": "warm")) // 0 auto, 1 cold, 2 warm
+      LAZYSWITCH(49, "climate/mode", "%s", vals[0] == 1 ? "limited_manual" : (vals[0] == 0xff ? "auto" : "manual")) // 01 = limited_manual, FF = auto, 05 = unlimited_manual
+      LAZYSWITCH(65, "climate/fan", "%s", vals[0] == 0 ? "off" : (vals[0] == 1 ? "low" : (vals[0] == 2 ? "medium" : "high")))
+      LAZYSWITCH(66, "bypass_activation_mode", "%s", vals[0] == 0 ? "auto" : (vals[0] == 1 ? "activated" : "deactivated")) // 0 auto, 1 activated, 2 deactivated
+      LAZYSWITCH(67, "climate/preset", "%s", vals[0] == 0 ? "auto" : (vals[0] == 1 ? "cool" : "warm"))                     // 0 auto, 1 cold, 2 warm
       LAZYSWITCH(81, "next_fan_change", "%d", uint32)
       LAZYSWITCH(82, "next_bypass_change", "%d", uint32)
 
       // Fans
       LAZYSWITCH(117, "exhaust_fan_duty", "%d", vals[0]) // %
-      LAZYSWITCH(118, "supply_fan_duty", "%d", vals[0]) // %
-      LAZYSWITCH(119, "exhaust_fan_flow", "%d", uint16) // m3/h
-      LAZYSWITCH(120, "supply_fan_flow", "%d", uint16) // m3/h
+      LAZYSWITCH(118, "supply_fan_duty", "%d", vals[0])  // %
+      LAZYSWITCH(119, "exhaust_fan_flow", "%d", uint16)  // m3/h
+      LAZYSWITCH(120, "supply_fan_flow", "%d", uint16)   // m3/h
       LAZYSWITCH(121, "exhaust_fan_speed", "%d", uint16) // rpm
-      LAZYSWITCH(122, "supply_fan_speed", "%d", uint16) // rpm
+      LAZYSWITCH(122, "supply_fan_speed", "%d", uint16)  // rpm
 
       // Power
-      LAZYSWITCH(128, "power_consumption_current", "%d", uint16) 
-      LAZYSWITCH(129, "power_consumption_ytd", "%d", uint16)  // kWh
-      LAZYSWITCH(130, "power_consumption_since_start", "%d", uint16)  // kWh
+      LAZYSWITCH(128, "power_consumption_current", "%d", uint16)
+      LAZYSWITCH(129, "power_consumption_ytd", "%d", uint16)         // kWh
+      LAZYSWITCH(130, "power_consumption_since_start", "%d", uint16) // kWh
 
-      LAZYSWITCH(192, "remaining_days_filter_replacement", "%d", uint16)  // kWh
-      
-      
+      LAZYSWITCH(192, "remaining_days_filter_replacement", "%d", uint16) // days
+
       // Avoided heating section
-      LAZYSWITCH(213, "ah_actual", "%.2f", uint16/ 100.0)  // watts
-      LAZYSWITCH(214, "ah_ytd", "%d", uint16)  // wh
-      LAZYSWITCH(215, "ah_total", "%d", uint16)  // wh
-      // AVoided cooling section
-      LAZYSWITCH(216, "ac_actual", "%.2f", uint16/ 100.0)  // watts
-      LAZYSWITCH(217, "ac_ytd", "%d", uint16)  // wh
-      LAZYSWITCH(218, "ac_total", "%d", uint16)  // wh   
-      
-      LAZYSWITCH(227, "bypass_state", "%d", vals[0])  // %
+      LAZYSWITCH(213, "ah_actual", "%.2f", uint16 / 100.0) // watts
+      LAZYSWITCH(214, "ah_ytd", "%d", uint16)              // wh
+      LAZYSWITCH(215, "ah_total", "%d", uint16)            // wh
+      // Avoided cooling section
+      LAZYSWITCH(216, "ac_actual", "%.2f", uint16 / 100.0) // watts
+      LAZYSWITCH(217, "ac_ytd", "%d", uint16)              // wh
+      LAZYSWITCH(218, "ac_total", "%d", uint16)            // wh
+
+      LAZYSWITCH(227, "bypass_state", "%d", vals[0]) // %
 
       // temps
-      LAZYSWITCH(209, "rmot", "%.1f", uint16/ 10.0)  // C°
-      LAZYSWITCH(212, "target_temp", "%.1f", uint16/ 10.0)  // C°
-      LAZYSWITCH(220, "pre_heater_temp_before", "%.1f", uint16/10.0) // C°
-      LAZYSWITCH(221, "post_heater_temp_after", "%.1f", uint16/10.0)  // C°
-      LAZYSWITCH(274, "extract_air_temp", "%.1f", int16 /10.0)  // C°   
-      LAZYSWITCH(275, "exhaust_air_temp", "%.1f", int16 /10.0)  // C°   
-      LAZYSWITCH(276, "outdoor_air_temp", "%.1f", int16 /10.0)  // C°   
-      LAZYSWITCH(277, "pre_heater_temp_after", "%.1f", int16 /10.0)  // C°
-      LAZYSWITCH(278, "post_heater_temp_before", "%.1f", int16 /10.0)  // C°   
+      LAZYSWITCH(209, "rmot", "%.1f", int16 / 10.0)        // C°
+      LAZYSWITCH(212, "target_temp", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(220, "pre_heater_temp_before", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(221, "post_heater_temp_after", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(274, "extract_air_temp", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(275, "exhaust_air_temp", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(276, "outdoor_air_temp", "%.1f", int16 / 10.0) // C°
+      LAZYSWITCH(277, "pre_heater_temp_after", "%.1f", int16 / 10.0)   // C°
+      LAZYSWITCH(278, "post_heater_temp_before", "%.1f", int16 / 10.0) // C°
       // Humidity
-      LAZYSWITCH(290, "extract_air_humidity", "%d", vals[0])  // %
-      LAZYSWITCH(291, "exhaust_air_humidity", "%d", vals[0])  // %   
-      LAZYSWITCH(292, "outdoor_air_humidity", "%d", vals[0])  // %   
+      LAZYSWITCH(290, "extract_air_humidity", "%d", vals[0])      // %
+      LAZYSWITCH(291, "exhaust_air_humidity", "%d", vals[0])      // %
+      LAZYSWITCH(292, "outdoor_air_humidity", "%d", vals[0])      // %
       LAZYSWITCH(293, "pre_heater_humidity_after", "%d", vals[0]) // %
-      LAZYSWITCH(294, "supply_air_humidity", "%d", vals[0])  // %   
-      default: 
+      LAZYSWITCH(294, "supply_air_humidity", "%d", vals[0])       // %
+      default:
         return false;
     }
   }
@@ -247,4 +246,4 @@ namespace comfoair {
     return true;
   }
 
-} 
+}

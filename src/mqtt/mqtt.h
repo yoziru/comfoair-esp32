@@ -9,10 +9,10 @@ namespace comfoair {
   class MQTT {
     public:
       MQTT();
-      void subscribeTo(char* topic, MQTT_CALLBACK_SIGNATURE);
+      void subscribeTo(const char* const topic, MQTT_CALLBACK_SIGNATURE);
       void setup();
       void loop();
-      void writeToTopic(char *topic, char* payload);
+      void writeToTopic(const char* const topic, const char* const payload);
 
     private:
       PubSubClient client;

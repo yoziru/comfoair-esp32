@@ -11,7 +11,7 @@ WiFiClient wifiClient;
     this->client = PubSubClient(wifiClient);
   }
 
-  void MQTT::subscribeTo(char* const topic, MQTT_CALLBACK_SIGNATURE) {
+  void MQTT::subscribeTo(const char* const topic, MQTT_CALLBACK_SIGNATURE) {
     this->callbackMap[topic] = callback;
     if (this->client.connected()) {
       this->subscribeToTopics();
@@ -24,7 +24,7 @@ WiFiClient wifiClient;
       Serial.println("-------new message from broker-----");
       Serial.print("channel:");
       Serial.println(topic);
-      Serial.print("data:");  
+      Serial.print("data:");
       Serial.write(payload, length);
       Serial.println();
       callbackMap[topic](topic, payload, length);
@@ -36,9 +36,9 @@ WiFiClient wifiClient;
     client.loop();
   }
 
-  void MQTT::writeToTopic(char * topic, char * payload) {
+  void MQTT::writeToTopic(const char* const topic, const char* const payload) {
     this->ensureConnected();
-    this->client.publish(topic, payload);
+    this->client.publish(topic, payload, true);
   }
 
 // PRIVATE STUFF
@@ -51,9 +51,13 @@ WiFiClient wifiClient;
         // Attempt to connect
         String clientId = "ESP32Client-";
         clientId += String(random(0xffff), HEX);
-        if (client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS)) {
+        // Last will message -> notify HA that device is offline
+        if (this->client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS, MQTT_PREFIX "/status", 0, true, "offline")) {
             Serial.println("connected");
             subscribeToTopics();
+
+            // Device is on!
+            this->client.publish(MQTT_PREFIX "/status", "online", true);
         } else {
             Serial.print("failed, rc=");
             Serial.print(client.state());
@@ -61,7 +65,7 @@ WiFiClient wifiClient;
             // Wait 5 seconds before retrying
             delay(5000);
         }
-    }
+      }
   }
 
   void MQTT::subscribeToTopics() {
