@@ -2,6 +2,26 @@
 
 Check issue https://github.com/vekexasia/comfoair-esp32/issues/46 about the project direction and future changes to this repo.
 
+This is another update based on olimex ESP32-EVB board :
+
+https://www.olimex.com/Products/IoT/ESP32/ESP32-EVB/open-source-hardware
+
+The advantage of that board is that it integrate wifi, network card and a CAN connection.
+Also you can get a clean box from olimex :
+https://www.olimex.com/Products/IoT/ESP32/BOX-ESP32-EVB-EA/
+
+So you don't need to do soldery or 3D box,... the only things needed are the board and the case.
+
+For the cable, use a standard network cable and connect orange, white-orange, white-green on the olimex (see picture)
+
+Here is a picture of the board in the case connected to my Zehnder Comfoair q450.
+
+![](./docs/olimex1.jpeg)
+![](./docs/olimex2.jpeg)
+![](./docs/ha_screen.png)
+
+---
+
 # **This is slightly modified version of https://github.com/vekexasia/comfoair-esp32/ firmware for ESP32 that can talk with Comfoair Q350 (and compatible, eg. Aeris Next 350). Please read [Changes](#changes-to-original-project) section.**
 
 # Comfoair Q 350 MQTT bridge

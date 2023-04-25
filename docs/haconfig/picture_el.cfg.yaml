@@ -1,0 +1,92 @@
+type: picture-elements
+image: local/images/wtw_icons2.png
+elements:
+  - type: state-label
+    entity: sensor.vmc_etage_supply_fan_flow
+    style:
+      top: 59%
+      left: 73%
+      color: black
+  - type: state-label
+    entity: sensor.vmc_etage_exhaust_fan_flow
+    style:
+      top: 59%
+      left: 27%
+      color: black
+  - type: state-label
+    entity: sensor.vmc_etage_extract_air_temperature
+    style:
+      top: 20%
+      left: 90%
+      color: darkred
+  - type: state-label
+    entity: sensor.vmc_etage_extract_air_humidity
+    style:
+      top: 28%
+      left: 90%
+      color: '#4171b1'
+  - type: state-label
+    entity: sensor.vmc_etage_post_heater_temp_before
+    style:
+      top: 76%
+      left: 90%
+      color: darkred
+  - type: state-label
+    entity: sensor.vmc_etage_supply_air_humidity
+    style:
+      top: 84.2%
+      left: 90%
+      color: '#4171b1'
+  - type: state-label
+    entity: sensor.vmc_etage_outdoor_air_temperature
+    style:
+      top: 20%
+      left: 12.5%
+      color: '#4171b1'
+  - type: state-label
+    entity: sensor.vmc_etage_outdoor_air_humidity
+    style:
+      top: 28%
+      left: 12.5%
+      color: '#4171b1'
+  - type: state-label
+    entity: sensor.vmc_etage_exhaust_air_temperature
+    style:
+      top: 76%
+      left: 13%
+      color: '#4171b1'
+  - type: state-label
+    entity: sensor.vmc_etage_exhaust_air_humidity
+    style:
+      top: 84.2%
+      left: 13%
+      color: '#4171b1'
+  - type: state-label
+    entity: sensor.vmc_etage_bypass_state
+    prefix: 'Bypass: '
+    style:
+      top: 26%
+      left: 50%
+      color: black
+  - type: state-label
+    entity: sensor.vmc_etage_remaining_filter_days
+    prefix: 'Chg Filtre '
+    suffix: ' days'
+    style:
+      top: 92%
+      left: 50%
+      color: black
+  - type: state-label
+    entity: sensor.vmc_etage_power_current
+    prefix: 'Power '
+    style:
+      top: 6%
+      left: 50%
+      color: black
+  - type: state-label
+    entity: sensor.vmc_etage_rmot
+    prefix: 'Rmot '
+    style:
+      top: 10%
+      left: 13%
+      color: grey
