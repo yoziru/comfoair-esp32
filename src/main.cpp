@@ -23,7 +23,7 @@ void setup() {
   mqtt->setup();
   comfo->setup();
   ota->setup();
-  Serial.println("ESPVMC init");
+  Serial.println("ESP32 ComfoAir init");
   
 }
 
