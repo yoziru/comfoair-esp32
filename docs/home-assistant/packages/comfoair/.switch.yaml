@@ -1,7 +1,7 @@
 - platform: template
   switches:
-    vmc_supply_ventilation:
-      value_template: "{{ states('sensor.vmc_supply_fan_duty') | int > 0 }}"
+    mvhr_supply_ventilation:
+      value_template: "{{ states('sensor.mvhr_supply_fan_duty') | int > 0 }}"
       turn_on:
         service: mqtt.publish
         data:
@@ -13,8 +13,8 @@
           topic: comfoair/commands/ventilation_extract_only
           payload: ':)'
 
-    vmc_extract_ventilation:
-      value_template: "{{ states('sensor.vmc_exhaust_fan_duty') | int > 0 }}"
+    mvhr_extract_ventilation:
+      value_template: "{{ states('sensor.mvhr_exhaust_fan_duty') | int > 0 }}"
       turn_on:
         service: mqtt.publish
         data:

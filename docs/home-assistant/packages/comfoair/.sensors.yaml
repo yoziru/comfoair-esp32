@@ -1,0 +1,262 @@
+climate:
+  - name: "Zehnder ComfoAir Climate"
+    unique_id: "mvhr_climate"
+    icon: mdi:air-filter
+    availability:
+      topic: "comfoair/status"
+      payload_available: "online"
+      payload_not_available: "offline"
+    current_temperature_topic: "comfoair/extract_air_temp"
+    current_humidity_topic: "comfoair/extract_air_humidity"
+    temperature_state_topic: "comfoair/target_temp"
+    fan_mode_command_topic: "comfoair/climate/fan/set"
+    fan_mode_state_topic: "comfoair/climate/fan"
+    fan_modes:
+      - "off"
+      - low
+      - medium
+      - high
+    mode_command_topic: "comfoair/climate/preset/set"
+    mode_state_topic: "comfoair/climate/preset"
+    mode_command_template: "{{ {'auto': 'auto', 'cool': 'cool', 'heat': 'warm'}[value] | default('auto') }}"
+    mode_state_template: "{{ {'auto': 'auto', 'cool': 'cool', 'warm': 'heat'}[value] | default('auto') }}"
+    modes:
+      - auto
+      - cool
+      - heat
+    preset_mode_command_topic: "comfoair/climate/mode/set"
+    preset_mode_state_topic: "comfoair/climate/mode"
+    preset_modes:
+      - auto
+      - limited_manual
+      - manual
+    min_temp: 17
+    max_temp: 27
+
+fan:
+  - name: "Zehnder ComfoAir Fan"
+    unique_id: "mvhr_fan"
+    icon: mdi:air-filter
+    payload_off: "off"
+    payload_on: "medium"
+    command_topic: "comfoair/climate/fan/set"
+    state_topic: "comfoair/climate/fan"
+    state_value_template: "{{ iif(value == 'off', 'off', 'medium') }}"
+    availability_topic: "comfoair/status"
+    preset_mode_command_topic: "comfoair/climate/mode/set"
+    preset_mode_state_topic: "comfoair/climate/mode"
+    preset_mode_value_template: "{{ {'auto': 'auto', 'manual': 'manual', 'limited_manual': 'manual'}[value] | default('auto') }}"
+    preset_modes:
+      - auto
+      - manual
+    speed_range_min: 1
+    speed_range_max: 3
+    percentage_state_topic: "comfoair/climate/fan"
+    percentage_value_template: "{{ {'off': 0, 'low': 1, 'medium': 2, 'high': 3}[value] | default('medium') }}"
+    percentage_command_topic: "comfoair/climate/fan/set"
+    percentage_command_template: "{{ {0: 'off', 1: 'low', 2: 'medium', 3: 'high'}[value] | default('0') }}"
+
+sensor:
+  # Consumption
+  - name: "MVHR Power Current"
+    state_topic: "comfoair/power_consumption_current"
+    unit_of_measurement: W
+    device_class: power
+    icon: mdi:flash
+    state_class: measurement
+  - name: "MVHR Total Energy Saving"
+    state_topic: "comfoair/ah_ytd"
+    unit_of_measurement: KWh
+    state_class: measurement
+    icon: mdi:flash
+  # Fans
+  - name: "MVHR Exhaust Fan Speed"
+    state_topic: "comfoair/exhaust_fan_speed"
+    unit_of_measurement: rpm
+    state_class: measurement
+    icon: mdi:percent
+  - name: "MVHR Supply Fan Speed"
+    state_topic: "comfoair/supply_fan_speed"
+    unit_of_measurement: rpm
+    state_class: measurement
+    icon: mdi:percent
+  - name: "MVHR Exhaust Fan Duty"
+    state_topic: "comfoair/exhaust_fan_duty"
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:percent
+  - name: "MVHR Supply Fan Duty"
+    state_topic: "comfoair/supply_fan_duty"
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:percent
+  - name: "MVHR Supply Fan User Speed"
+    state_topic: "comfoair/fan_speed"
+    icon: mdi:fan
+
+  # Flow
+  - name: "MVHR Exhaust Fan Flow"
+    state_topic: "comfoair/exhaust_fan_flow"
+    unit_of_measurement: "m³/h"
+    state_class: measurement
+    icon: mdi:pump
+  - name: "MVHR Supply Fan Flow"
+    state_topic: "comfoair/supply_fan_flow"
+    unit_of_measurement: "m³/h"
+    state_class: measurement
+    icon: mdi:pump
+  
+  # Temperature
+  - name: "MVHR Outdoor Air Temperature"
+    state_topic: "comfoair/outdoor_air_temp"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer
+  - name: "MVHR Exhaust Air Temperature"
+    state_topic: "comfoair/exhaust_air_temp"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer
+  - name: "MVHR Extract Air Temperature"
+    state_topic: "comfoair/extract_air_temp"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer
+  - name: "MVHR Pre Heater Temp Before"
+    state_topic: "comfoair/pre_heater_temp_before"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer
+  - name: "MVHR Pre Heater Temp After"
+    state_topic: "comfoair/pre_heater_temp_after"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer
+  - name: "MVHR Post Heater Temp Before"
+    state_topic: "comfoair/post_heater_temp_before"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer
+  - name: "MVHR Post Heater Temp After"
+    state_topic: "comfoair/post_heater_temp_after"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer
+  - name: "MVHR Temperature Profile Target Temperature"
+    state_topic: "comfoair/target_temp"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer
+  - name: "MVHR Running Mean Outdoor Temp (RMOT)"
+    state_topic: "comfoair/rmot"
+    unit_of_measurement: "°C"
+    state_class: measurement
+    icon: mdi:thermometer 
+
+  # Humidity
+  - name: "MVHR Outdoor Air Humidity"
+    state_topic: "comfoair/outdoor_air_humidity"
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:water-percent
+  - name: "MVHR Exhaust Air Humidity"
+    state_topic: "comfoair/exhaust_air_humidity"
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:water-percent
+  - name: "MVHR Extract Air Humidity"
+    state_topic: "comfoair/extract_air_humidity"
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:water-percent
+  - name: "MVHR Supply Air Humidity"
+    state_topic: "comfoair/supply_air_humidity"
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:water-percent
+  - name: "MVHR Pre Heater Humidity After"
+    state_topic: "comfoair/pre_heater_humidity_after"
+    unit_of_measurement: "%"
+    state_class: measurement
+    icon: mdi:water-percent
+
+  # States
+  - name: "MVHR Remaining Filter Days"
+    state_topic: "comfoair/remaining_days_filter_replacement"
+    unit_of_measurement: "days"
+    device_class: duration
+  - name: "MVHR Bypass Open Factor"
+    state_topic: "comfoair/bypass_state"
+    unit_of_measurement: "%"
+    icon: mdi:percent
+    state_class: measurement
+  - name: "MVHR Next Bypass Change"
+    state_topic: "comfoair/next_bypass_change"
+    unit_of_measurement: "seconds"
+    state_class: measurement
+    device_class: duration
+  - name: "MVHR Next Fan Speed Change"
+    state_topic: "comfoair/next_fan_change"
+    unit_of_measurement: "seconds"
+    state_class: measurement
+    device_class: duration
+  - name: "MVHR Away Indicator"
+    state_topic: "comfoair/away_indicator"
+  - name: "MVHR Operating Mode"
+    state_topic: "comfoair/operating_mode"
+  - name: "MVHR Temp Profile"
+    state_topic: "comfoair/temp_profile"
+
+  #
+select:
+    - name: "MVHR Ventilation Mode"
+      command_topic: "comfoair/climate/mode/set"
+      state_topic: "comfoair/climate/mode"
+      availability_topic: "comfoair/status"
+      options:
+        - "auto"
+        - "manual"
+    - name: "MVHR Temperature Profile"
+      command_topic: "comfoair/climate/preset/set"
+      state_topic: "comfoair/climate/preset"
+      availability_topic: "comfoair/status"
+      options:
+        - "auto"
+        - "cool"
+        - "warm"
+    - name: "MVHR User Fan Speed"
+      command_topic: "comfoair/climate/fan/set"
+      state_topic: "comfoair/climate/fan"
+      availability_topic: "comfoair/status"
+      options:
+        - "off"
+        - "low"
+        - "medium"
+        - "high"
+    # ?? TODO ??
+    - name: "MVHR Bypass Activation Mode"
+      command_topic: "comfoair/bypass_activation_mode/set"
+      state_topic: "comfoair/bypass_activation_mode"
+      availability_topic: "comfoair/status"
+      options:
+        - "off"
+        - "on"
+        - "auto"
+
+button:
+  - name: "MVHR Boost 1h"
+    command_topic: "comfoair/commands/boost_60_min"
+  - name: "MVHR Boost Stop"
+    command_topic: "comfoair/commands/boost_end"     
+  - name: "MVHR Bypass ON 1h"
+    command_topic: "comfoair/commands/bypass_activate_1h"     
+  - name: "MVHR Bypass OFF 1h"
+    command_topic: "comfoair/commands/bypass_deactivate_1h"     
+  - name: "MVHR Bypass AUTO"
+    command_topic: "comfoair/commands/bypass_auto"     
+  # - name: "MVHR Profile Normal"
+  #   command_topic: "comfoair/commands/temp_profile_normal"     
+  # - name: "MVHR Profile Cool"
+  #   command_topic: "comfoair/commands/temp_profile_cool"     
+  # - name: "MVHR Profile Warm"
+  #   command_topic: "comfoair/commands/temp_profile_warm"     
